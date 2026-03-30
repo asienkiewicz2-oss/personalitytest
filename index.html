@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HEXACO-60 — Profil Osobowości</title>
+<style>
+:root {
+  --gold:#C5A55A; --navy:#1B2A4A; --teal:#2E8B8B; --coral:#CD5C5C;
+  --green:#4A7C59; --blue:#4A90B8; --purple:#8B6BAE;
+  --bg:#0F1923; --card:#1A2736; --card2:#1F2F42;
+  --text:#E8E0D0; --muted:#8A9BB0; --border:rgba(197,165,90,0.2);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;min-height:100vh}
+.container{max-width:700px;margin:0 auto;padding:16px}
+.header{text-align:center;padding:32px 16px 24px;border-bottom:2px solid var(--gold);margin-bottom:24px}
+.header h1{font-size:1.6rem;color:var(--gold);font-weight:700}
+.header .subtitle{font-size:.85rem;color:var(--muted);margin-top:6px}
+.header .badge{display:inline-block;background:rgba(197,165,90,.15);color:var(--gold);font-size:.7rem;padding:3px 10px;border-radius:12px;margin-top:10px;border:1px solid var(--border)}
+.intro-card{background:var(--card);border-radius:12px;padding:20px;margin-bottom:20px;border-left:3px solid var(--teal)}
+.intro-card h2{font-size:1rem;color:var(--teal);margin-bottom:8px}
+.intro-card p{font-size:.85rem;color:var(--muted)}
+.progress-bar-container{position:sticky;top:0;z-index:100;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--border)}
+.progress-bar{height:6px;background:var(--card2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:3px;transition:width .3s ease;width:0%}
+.progress-text{text-align:center;font-size:.75rem;color:var(--muted);margin-top:4px}
+.question-card{background:var(--card);border-radius:12px;padding:18px;margin-bottom:12px;border:1px solid transparent;transition:border-color .3s}
+.question-card.answered{border-color:rgba(46,139,139,.3)}
+.question-card.highlighted{border-color:var(--coral);animation:pulse .5s}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.01)}}
+.q-number{display:inline-block;background:rgba(197,165,90,.15);color:var(--gold);font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px}
+.q-text{font-size:.9rem;margin-bottom:14px;color:var(--text)}
+.likert{display:flex;gap:6px;justify-content:space-between}
+.likert-btn{flex:1;padding:10px 4px;border:1.5px solid var(--border);border-radius:8px;background:var(--card2);color:var(--muted);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;-webkit-tap-highlight-color:transparent}
+.likert-btn:hover{border-color:var(--teal);color:var(--text)}
+.likert-btn.selected{background:var(--teal);border-color:var(--teal);color:#fff}
+.likert-labels{display:flex;justify-content:space-between;font-size:.6rem;color:var(--muted);margin-top:4px;padding:0 2px}
+.submit-section{text-align:center;padding:24px 0}
+.submit-btn{background:linear-gradient(135deg,var(--gold),#A08940);color:var(--navy);border:none;padding:14px 40px;font-size:1rem;font-weight:700;border-radius:12px;cursor:pointer;transition:transform .2s,box-shadow .2s;letter-spacing:.5px}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(197,165,90,.3)}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.submit-hint{font-size:.75rem;color:var(--muted);margin-top:8px}
+.results-section{display:none}
+.results-section.visible{display:block}
+.result-header{text-align:center;padding:32px 16px;border-bottom:2px solid var(--gold);margin-bottom:24px}
+.result-header h1{font-size:1.5rem;color:var(--gold)}
+.result-header p{font-size:.85rem;color:var(--muted);margin-top:6px}
+.radar-container{background:var(--card);border-radius:16px;padding:20px;margin-bottom:20px;text-align:center}
+.radar-container h3{color:var(--gold);font-size:1rem;margin-bottom:12px}
+.scale-card{background:var(--card);border-radius:12px;padding:18px;margin-bottom:14px;border-left:4px solid var(--teal)}
+.scale-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.scale-name{font-weight:700;font-size:.95rem}
+.scale-score{font-size:1.3rem;font-weight:800;color:var(--gold)}
+.scale-bar-bg{height:8px;background:var(--card2);border-radius:4px;margin-bottom:12px;overflow:hidden}
+.scale-bar-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.scale-desc{font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:4px}
+.high-low{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+@media(max-width:500px){.high-low{grid-template-columns:1fr}}
+.hl-box{padding:10px;border-radius:8px;font-size:.78rem;line-height:1.55;color:var(--muted)}
+.hl-high{background:rgba(74,144,184,.08);border:1px solid rgba(74,144,184,.15)}
+.hl-low{background:rgba(139,107,174,.08);border:1px solid rgba(139,107,174,.15)}
+.hl-label{font-weight:700;font-size:.7rem;text-transform:uppercase;margin-bottom:4px;letter-spacing:.5px}
+.expand-btn{display:flex;align-items:center;gap:6px;background:rgba(197,165,90,.08);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;width:100%;text-align:left;color:var(--gold);font-size:.78rem;font-weight:700;transition:background .2s;margin-top:8px}
+.expand-btn:hover{background:rgba(197,165,90,.15)}
+.expand-arrow{transition:transform .3s;font-size:.7rem}
+.expand-arrow.open{transform:rotate(90deg)}
+.expand-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.expand-content.open{max-height:900px}
+.expand-inner{padding:12px 14px;font-size:.8rem;color:var(--muted);line-height:1.65}
+.finding-row{padding:10px 0;border-bottom:1px solid rgba(197,165,90,.08)}
+.finding-row:last-child{border-bottom:none}
+.finding-stat{color:var(--gold);font-weight:700;font-size:.82rem;margin-bottom:2px}
+.finding-desc{font-size:.78rem;color:var(--muted);line-height:1.55}
+.finding-src{font-size:.68rem;color:rgba(138,155,176,.5);font-style:italic;margin-top:2px}
+.expand-note{font-size:.72rem;color:rgba(138,155,176,.5);font-style:italic;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
+.admin-banner{background:rgba(205,92,92,.15);border:1px solid var(--coral);border-radius:8px;padding:10px 16px;margin-bottom:16px;text-align:center;font-size:.75rem;color:var(--coral);font-weight:600}
+.app-footer{text-align:center;padding:24px;font-size:.65rem;color:var(--muted);border-top:1px solid var(--border);margin-top:20px}
+.scroll-top{position:fixed;bottom:20px;right:20px;background:var(--gold);color:var(--navy);border:none;width:44px;height:44px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:none;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+
+/* ===== LIGHT MODE ===== */
+body.light-mode {
+  --bg:#F5F3EE; --card:#FFFFFF; --card2:#F0EDE6;
+  --text:#2C2C2C; --muted:#5A6270; --border:rgba(27,42,74,0.15);
+  --gold:#8B6F2E; --navy:#1B2A4A; --teal:#1E7070; --coral:#B54040;
+  --green:#3A6648; --blue:#3070A0; --purple:#6B4E8E;
+}
+body.light-mode .progress-bar-container { background:var(--bg); }
+body.light-mode .likert-btn { background:var(--card2); color:var(--muted); border-color:var(--border); }
+body.light-mode .likert-btn:hover { border-color:var(--teal); color:var(--text); }
+body.light-mode .likert-btn.selected { background:var(--teal); border-color:var(--teal); color:#fff; }
+body.light-mode .submit-btn { background:linear-gradient(135deg,var(--gold),#A08940); color:#fff; }
+body.light-mode .scroll-top { background:var(--gold); color:#fff; }
+body.light-mode .admin-banner { background:rgba(181,64,64,.1); border-color:var(--coral); color:var(--coral); }
+body.light-mode canvas { filter: none; }
+
+/* ===== LARGE FONT MODE ===== */
+body.large-font { font-size:118%; }
+body.large-font .q-text { font-size:1.05rem; }
+body.large-font .likert-btn { font-size:1rem; padding:12px 6px; }
+body.large-font .scale-desc, body.large-font .hl-box { font-size:.92rem; }
+body.large-font .finding-desc { font-size:.88rem; }
+body.large-font .expand-inner { font-size:.9rem; }
+body.large-font .intro-card p { font-size:.95rem; }
+
+/* ===== HAMBURGER MENU ===== */
+.hamburger-btn {
+  position:fixed; top:12px; left:12px; z-index:1000;
+  background:rgba(197,165,90,.15); border:1px solid var(--border);
+  border-radius:8px; width:40px; height:40px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:4px; transition:background .2s; -webkit-tap-highlight-color:transparent;
+}
+.hamburger-btn:hover { background:rgba(197,165,90,.3); }
+.hamburger-btn span { display:block; width:20px; height:2px; background:var(--gold); border-radius:1px; transition:all .3s; }
+.hamburger-btn.open span:nth-child(1) { transform:rotate(45deg) translate(4px,4px); }
+.hamburger-btn.open span:nth-child(2) { opacity:0; }
+.hamburger-btn.open span:nth-child(3) { transform:rotate(-45deg) translate(4px,-4px); }
+
+.menu-overlay {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,.4); z-index:998; opacity:0;
+  pointer-events:none; transition:opacity .3s;
+}
+.menu-overlay.visible { opacity:1; pointer-events:auto; }
+
+.side-menu {
+  position:fixed; top:0; left:-280px; width:260px; height:100%;
+  background:var(--card); z-index:999; padding:60px 20px 20px;
+  transition:left .3s ease; box-shadow:4px 0 20px rgba(0,0,0,.3);
+  overflow-y:auto;
+}
+.side-menu.open { left:0; }
+.side-menu h3 { color:var(--gold); font-size:.9rem; margin-bottom:16px; text-transform:uppercase; letter-spacing:1px; }
+.menu-item {
+  display:flex; align-items:center; gap:12px;
+  padding:14px 12px; border-radius:10px; cursor:pointer;
+  transition:background .2s; margin-bottom:4px;
+  -webkit-tap-highlight-color:transparent;
+}
+.menu-item:hover { background:rgba(197,165,90,.1); }
+.menu-item .menu-icon { font-size:1.1rem; width:28px; text-align:center; flex-shrink:0; }
+.menu-item .menu-label { font-size:.85rem; color:var(--text); font-weight:500; }
+.menu-item .menu-status {
+  margin-left:auto; font-size:.7rem; padding:2px 8px;
+  border-radius:10px; font-weight:700; flex-shrink:0;
+}
+.menu-item .menu-status.on { background:rgba(46,139,139,.2); color:var(--teal); }
+.menu-item .menu-status.off { background:rgba(138,155,176,.15); color:var(--muted); }
+
+.menu-divider { height:1px; background:var(--border); margin:12px 0; }
+
+/* ===== EXPORT BUTTON ===== */
+.export-section {
+  text-align:center; padding:20px 0; margin-top:8px;
+}
+.export-btn {
+  background:linear-gradient(135deg,var(--teal),#1E7070);
+  color:#fff; border:none; padding:14px 32px;
+  font-size:.9rem; font-weight:700; border-radius:12px;
+  cursor:pointer; transition:transform .2s, box-shadow .2s;
+  letter-spacing:.3px; display:inline-flex; align-items:center; gap:8px;
+}
+.export-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(46,139,139,.3); }
+.export-btn:active { transform:translateY(0); }
+.export-hint { font-size:.72rem; color:var(--muted); margin-top:8px; }
+
+</style>
+</head>
+<body>
+
+<!-- Hamburger Menu -->
+<button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+<div class="menu-overlay" id="menuOverlay"></div>
+<nav class="side-menu" id="sideMenu">
+  <h3>⚙️ Ustawienia</h3>
+  <div class="menu-item" id="toggleFont">
+    <div class="menu-icon">🔤</div>
+    <div class="menu-label">Większy font</div>
+    <div class="menu-status off" id="fontStatus">OFF</div>
+  </div>
+  <div class="menu-item" id="toggleTheme">
+    <div class="menu-icon">☀️</div>
+    <div class="menu-label">Jasny motyw</div>
+    <div class="menu-status off" id="themeStatus">OFF</div>
+  </div>
+  <div class="menu-divider"></div>
+  <div class="menu-item" style="opacity:.5;pointer-events:none;">
+    <div class="menu-icon">ℹ️</div>
+    <div class="menu-label" style="font-size:.75rem;color:var(--muted);">Ustawienia zapisują się<br>w przeglądarce</div>
+  </div>
+</nav>
+
+<div id="questionnaire-section">
+<div class="container">
+<div class="header">
+  <h1>&#x1F9EC; HEXACO-60</h1>
+  <div class="subtitle">Kwestionariusz Osobowości</div>
+  <div class="badge">Psychologia Przywództwa &middot; SWPS 2026</div>
+</div>
+<div class="admin-banner" id="adminBanner">&#x1F527; TRYB TESTOWY &mdash; można przesłać bez odpowiedzi na wszystkie pytania</div>
+<div class="intro-card">
+  <h2>&#x1F4CB; Instrukcja</h2>
+  <p>Przeczytaj każde stwierdzenie i oceń, na ile się z nim zgadzasz. Odpowiadaj szczerze &mdash; nie ma dobrych ani złych odpowiedzi. Wyniki zobaczysz <strong>tylko Ty</strong> na swoim telefonie.</p>
+  <p style="margin-top:8px;"><strong>Czas:</strong> ok. 8&ndash;10 minut &middot; <strong>Skala:</strong> 1 = zdecydowanie się nie zgadzam &rarr; 5 = zdecydowanie się zgadzam</p>
+</div>
+<div class="progress-bar-container">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">0 / 60</div>
+</div>
+<div id="questions-container"></div>
+<div class="submit-section">
+  <button class="submit-btn" id="submitBtn" disabled>&#x1F4CA; Pokaż mój profil osobowości</button>
+  <div class="submit-hint" id="submitHint">Odpowiedz na wszystkie 60 pytań</div>
+</div>
+</div>
+</div>
+
+<div id="results-section" class="results-section">
+<div class="container">
+<div class="result-header">
+  <h1>&#x1F9EC; Twój Profil HEXACO</h1>
+  <p>Wyniki na 6 wymiarach osobowości</p>
+</div>
+<div class="radar-container">
+  <h3>Profil osobowości</h3>
+  <canvas id="radarChart" width="340" height="340"></canvas>
+</div>
+<div id="scale-results"></div>
+<div class="intro-card" style="border-left-color:var(--coral);margin-top:20px;">
+  <h2>&#x26A0;&#xFE0F; O narzędziu</h2>
+  <p>HEXACO-60 to narzędzie samoopisowe mierzące tendencje osobowościowe. Wyniki <strong>nie są diagnozą</strong> &mdash; stanowią punkt wyjścia do refleksji nad własnymi preferencjami i sposobami funkcjonowania. Każdy profil niesie ze sobą specyficzne zasoby i wyzwania. Rzetelność skal: &alpha; = .73&ndash;.80 (Ashton &amp; Lee, 2009).</p>
+  <p style="margin-top:8px;">Kwestionariusz HEXACO-PI-R: &copy; Kibeom Lee &amp; Michael C. Ashton. Polska adaptacja: Skimina, Strus, Cieciuch, Szarota &amp; Izdebski (2020).</p>
+</div>
+<div style="text-align:center;padding:20px 0;">
+  
+<div class="export-section" id="exportSection">
+  <button class="export-btn" id="exportPdfBtn">📄 Eksportuj profil do PDF</button>
+  <div class="export-hint">Generuje PDF z wykresem i opisami — działa offline</div>
+</div>
+
+<button class="submit-btn" id="resetBtn" style="background:linear-gradient(135deg,var(--teal),#1F6B6B);">&#x1F504; Wypełnij ponownie</button>
+</div>
+<div class="app-footer">
+  HEXACO-PI-R &copy; Kibeom Lee &amp; Michael C. Ashton &middot; Ashton &amp; Lee (2009). <em>J. of Personality Assessment, 91</em>, 340&ndash;345.<br>
+  Polska adaptacja: Skimina, Strus, Cieciuch, Szarota &amp; Izdebski (2020)<br>
+  Narzędzie edukacyjne &middot; Psychologia Przywództwa &middot; SWPS 2026
+</div>
+</div>
+</div>
+<button class="scroll-top" id="scrollTopBtn">&#x2191;</button>
+
+<script>
+(function(){
+"use strict";
+
+// =========================================================
+// ADMIN MODE — set to false for production version
+var ADMIN_MODE = false;
+// =========================================================
+
+var ITEMS=[
+"",
+"Wizyta w galerii sztuki by\u0142aby dla mnie do\u015B\u0107 nudna.",
+"Planuj\u0119 z odpowiednim wyprzedzeniem i tak wszystko organizuj\u0119, aby unikn\u0105\u0107 zamieszania w ostatniej chwili.",
+"Nie \u017Cywi\u0119 urazy nawet wobec ludzi, kt\u00F3rzy mnie bardzo skrzywdzili.",
+"Zwykle czuj\u0119 si\u0119 z siebie zadowolony/a.",
+"Ba\u0142(a)bym si\u0119, gdybym musia\u0142/a podr\u00F3\u017Cowa\u0107 przy z\u0142ej pogodzie.",
+"Nie u\u017Cy\u0142(a)bym pochlebstw, aby uzyska\u0107 podwy\u017Ck\u0119 czy awans w pracy, nawet je\u015Bli wydawa\u0142oby mi si\u0119 to skuteczne.",
+"Ch\u0119tnie dowiaduj\u0119 si\u0119 nowych rzeczy o historii i \u017Cyciu politycznym innych kraj\u00F3w.",
+"Kiedy staram si\u0119 osi\u0105gn\u0105\u0107 jaki\u015B cel, wytrwale do niego d\u0105\u017C\u0119.",
+"Ludzie m\u00F3wi\u0105 mi czasami, \u017Ce jestem zbyt krytyczny/a wobec innych.",
+"Rzadko wyra\u017Cam swoje zdanie podczas spotka\u0144 grupowych.",
+"Czasem zamartwiam si\u0119 drobiazgami i nic nie mog\u0119 na to poradzi\u0107.",
+"Gdybym mia\u0142/a pewno\u015B\u0107, \u017Ce nigdy nie zostan\u0119 z\u0142apany/a, by\u0142(a)bym got\u00F3w/gotowa ukra\u015B\u0107 milion z\u0142otych.",
+"Tw\u00F3rcza praca nad powie\u015Bci\u0105, piosenk\u0105 czy obrazem sprawia\u0142aby mi przyjemno\u015B\u0107.",
+"Kiedy nad czym\u015B pracuj\u0119, nie zwracam zbyt wiele uwagi na szczeg\u00F3\u0142y.",
+"Ludzie czasami m\u00F3wi\u0105 mi, \u017Ce jestem zbyt uparty/a.",
+"Bardziej podoba mi si\u0119 praca wymagaj\u0105ca sta\u0142ego kontaktu z lud\u017Ami, ni\u017C taka, w kt\u00F3rej pracuje si\u0119 samemu.",
+"Kiedy cierpi\u0119 z powodu jakiego\u015B bolesnego wydarzenia, potrzebuj\u0119 kogo\u015B, kto sprawi, \u017Ce poczu\u0119 si\u0119 lepiej.",
+"Posiadanie du\u017Cych pieni\u0119dzy nie jest dla mnie szczeg\u00F3lnie wa\u017Cne.",
+"My\u015Bl\u0119, \u017Ce po\u015Bwi\u0119canie uwagi niekonwencjonalnym ideom to strata czasu.",
+"Decyzje podejmuj\u0119 raczej pod wp\u0142ywem chwili czy nastroju, ni\u017C po starannym namy\u015Ble.",
+"Ludzie uwa\u017Caj\u0105 mnie za osob\u0119 wybuchow\u0105.",
+"Zazwyczaj jestem radosny/a i optymistyczny/a.",
+"Zbiera mi si\u0119 na p\u0142acz, gdy widz\u0119, jak inni p\u0142acz\u0105.",
+"My\u015Bl\u0119, \u017Ce nale\u017Cy mi si\u0119 wi\u0119kszy szacunek ni\u017C zwyk\u0142ej osobie.",
+"Gdybym mia\u0142/a okazj\u0119, ch\u0119tnie poszed\u0142bym/posz\u0142abym na koncert muzyki klasycznej.",
+"Moje niezorganizowanie jest powodem k\u0142opot\u00F3w jakie miewam w pracy.",
+"M\u00F3j stosunek do ludzi, kt\u00F3rzy potraktowali mnie \u017Ale to: przebaczam i zapominam.",
+"Czuj\u0119, \u017Ce nie jestem zbyt popularny/a w swoim \u015Brodowisku.",
+"Gdy pojawia si\u0119 fizyczne niebezpiecze\u0144stwo, jestem przera\u017Cony/a.",
+"Je\u015Bli od kogo\u015B czego\u015B chc\u0119, \u015Bmiej\u0119 si\u0119 z jego \u017Cart\u00F3w, nawet gdy s\u0105 zupe\u0142nie beznadziejne.",
+"Nigdy nie lubi\u0142em/am zagl\u0105da\u0107 do encyklopedii.",
+"W pracy ograniczam si\u0119 jedynie do wykonywania niezb\u0119dnego minimum.",
+"Jestem raczej \u0142agodny/a w ocenianiu innych ludzi.",
+"W sytuacjach spo\u0142ecznych, to ja zazwyczaj wychodz\u0119 z inicjatyw\u0105.",
+"Martwi\u0119 si\u0119 r\u00F3\u017Cnymi rzeczami znacznie mniej ni\u017C wi\u0119kszo\u015B\u0107 ludzi.",
+"Nigdy nie przyj\u0105\u0142bym/przyj\u0119\u0142abym \u0142ap\u00F3wki, nawet gdyby by\u0142a bardzo du\u017Ca.",
+"Ludzie m\u00F3wi\u0105, \u017Ce mam bogat\u0105 wyobra\u017Ani\u0119.",
+"Zawsze staram si\u0119 dok\u0142adnie wykonywa\u0107 swoj\u0105 prac\u0119, nawet je\u015Bli poch\u0142ania to wi\u0119cej czasu.",
+"Zwykle jestem do\u015B\u0107 ust\u0119pliwy/a i potrafi\u0119 zmieni\u0107 zdanie, gdy inni ludzie si\u0119 ze mn\u0105 nie zgadzaj\u0105.",
+"Pierwsz\u0105 rzecz\u0105, jak\u0105 zawsze robi\u0119 w nowym miejscu, jest nawi\u0105zanie bli\u017Cszych kontakt\u00F3w z lud\u017Ami.",
+"Potrafi\u0119 radzi\u0107 sobie z trudnymi sytuacjami nie potrzebuj\u0105c emocjonalnego wsparcia ze strony innych.",
+"Posiadanie luksusowych i naprawd\u0119 kosztownych rzeczy sprawia\u0142oby mi mn\u00F3stwo przyjemno\u015Bci.",
+"Podobaj\u0105 mi si\u0119 ludzie, kt\u00F3rzy maj\u0105 nietypowe pogl\u0105dy.",
+"Pope\u0142niam du\u017Co b\u0142\u0119d\u00F3w, poniewa\u017C dzia\u0142am bez zastanowienia.",
+"Nie wpadam w z\u0142o\u015B\u0107 tak szybko jak inni ludzie.",
+"Wi\u0119kszo\u015B\u0107 ludzi jest bardziej entuzjastyczna i dynamiczna ode mnie.",
+"Do\u015Bwiadczam silnych uczu\u0107, kiedy kto\u015B bliski wyje\u017Cd\u017Ca na d\u0142u\u017Cszy czas.",
+"Chcia\u0142(a)bym, \u017Ceby ludzie wiedzieli, \u017Ce mam wysok\u0105 pozycj\u0119 i jestem kim\u015B wa\u017Cnym.",
+"Nie jestem typem osoby tw\u00F3rczej czy kreatywnej.",
+"Ludzie cz\u0119sto nazywaj\u0105 mnie perfekcjonist(k)\u0105.",
+"Nawet je\u015Bli kto\u015B pope\u0142nia du\u017Co b\u0142\u0119d\u00F3w, nie wyra\u017Cam si\u0119 o nim negatywnie.",
+"Czasem czuj\u0119, \u017Ce jestem kim\u015B bezwarto\u015Bciowym.",
+"Nawet w nag\u0142ym wypadku, nie wpad\u0142(a)bym w panik\u0119.",
+"Nie udawa\u0142(a)bym, \u017Ce kogo\u015B lubi\u0119, tylko po to, aby co\u015B od tej osoby uzyska\u0107.",
+"Uwa\u017Cam, \u017Ce dyskusje o problemach filozoficznych s\u0105 nudne.",
+"Wol\u0119 robi\u0107 to, co mi akurat przychodzi do g\u0142owy, zamiast trzyma\u0107 si\u0119 jakiego\u015B planu.",
+"Kiedy ludzie m\u00F3wi\u0105 mi, \u017Ce nie mam racji, od razu zaczynam si\u0119 z nimi spiera\u0107.",
+"B\u0119d\u0105c w grupie ludzi cz\u0119sto jestem t\u0105 osob\u0105, kt\u00F3ra wypowiada si\u0119 w imieniu innych.",
+"Nie ulegam uczuciom nawet w sytuacjach, w kt\u00F3rych wi\u0119kszo\u015B\u0107 ludzi bardzo si\u0119 wzrusza.",
+"Uleg\u0142(a)bym pokusie u\u017Cywania fa\u0142szywych pieni\u0119dzy, gdybym mia\u0142(a) pewno\u015B\u0107, \u017Ce to nie wyjdzie na jaw."
+];
+
+var SCALES={
+H:{name:"Uczciwo\u015B\u0107-Pokora",nameEN:"Honesty-Humility",items:[6,12,18,24,30,36,42,48,54,60],reversed:[12,24,30,42,48,60],color:"#C5A55A",
+  desc:"Wymiar opisuj\u0105cy podej\u015Bcie do relacji z innymi w kontek\u015Bcie uczciwo\u015Bci, szczero\u015Bci, skromno\u015Bci i stosunku do d\u00F3br materialnych. Facety: Szczero\u015B\u0107, Uczciwo\u015B\u0107, Unikanie chciwo\u015Bci, Skromno\u015B\u0107. Jest to wymiar nieobecny w klasycznym modelu Big Five.",
+  highDesc:"Osoby z wy\u017Cszym wynikiem preferuj\u0105 bezpo\u015Bredni\u0105, niemanipulacyjn\u0105 komunikacj\u0119. Mniejsze znaczenie ma dla nich status materialny i spo\u0142eczny. Podejmuj\u0105 decyzje z uwzgl\u0119dnieniem zasad, nawet gdy \u0142amanie regu\u0142 by\u0142oby op\u0142acalne.",
+  lowDesc:"Osoby z ni\u017Cszym wynikiem s\u0105 bardziej strategiczne w komunikacji i ch\u0119tniej wykorzystuj\u0105 taktyki wp\u0142ywu spo\u0142ecznego. Przywi\u0105zuj\u0105 wi\u0119ksz\u0105 wag\u0119 do statusu, presti\u017Cu i d\u00F3br materialnych. S\u0105 bardziej pragmatyczne w podej\u015Bciu do regu\u0142.",
+  leaderFindings:[
+    {stat:"H-H jako predyktor ponad Big Five",desc:"W meta-analizie obejmuj\u0105cej HEXACO i przyw\u00F3dztwo, Uczciwo\u015B\u0107-Pokora okazuje si\u0119 istotnym predyktorem efektywno\u015Bci liderskiej, kt\u00F3ry dodaje warto\u015B\u0107 wyja\u015Bniaj\u0105c\u0105 ponad pi\u0119\u0107 klasycznych czynnik\u00F3w Big Five. Modele HEXACO osi\u0105gaj\u0105 Multiple R = .51 dla efektywno\u015Bci lidera, wobec .39 dla samego FFM.",src:"Javalagi, Newman & Li (2024)"},
+    {stat:"H-H \u2192 humble leadership: \u03B2 = .14, p < .001",desc:"Uczciwo\u015B\u0107-Pokora jest istotnym predyktorem pokory liderskiej (humble leadership). Liderzy z wy\u017Cszym H-H cz\u0119\u015Bciej przejawiaj\u0105 zachowania takie jak docenianie wk\u0142adu innych i przyznawanie si\u0119 do ogranicze\u0144.",src:"Hassan, Malik, Raza et al. (2023)"},
+    {stat:"Niskie H-H a Mroczna Triada",desc:"Niski wynik na skali Uczciwo\u015B\u0107-Pokora pokrywa si\u0119 empirycznie z cechami sk\u0142adaj\u0105cymi si\u0119 na tzw. Mroczn\u0105 Triad\u0119 (Dark Triad): psychopati\u0119, makiawelizm i narcyzm. Niskie H-H nie jest r\u00F3wnoznaczne z tymi zaburzeniami, ale koreluje z nimi istotnie.",src:"Lee & Ashton (2005); Ashton & Lee (2007)"},
+    {stat:"Dewiacje w miejscu pracy: R = .63 (HEXACO) vs .47 (FFM)",desc:"W przewidywaniu dewiacji w miejscu pracy model HEXACO jest istotnie trafniejszy od Big Five \u2014 r\u00F3\u017Cnic\u0119 t\u0119 nap\u0119dza w\u0142a\u015Bnie wymiar H-H, kt\u00F3ry nie ma odpowiednika w pi\u0119cioczynnikowym modelu.",src:"Ashton & Lee (2007)"}
+  ]
+},
+E:{name:"Emocjonalno\u015B\u0107",nameEN:"Emotionality",items:[5,11,17,23,29,35,41,47,53,59],reversed:[35,41,53,59],color:"#CD5C5C",
+  desc:"Wymiar opisuj\u0105cy intensywno\u015B\u0107 reakcji emocjonalnych, potrzeb\u0119 blisko\u015Bci i wsparcia, wra\u017Cliwo\u015B\u0107 na zagro\u017Cenia oraz empati\u0119. Facety: L\u0119kliwo\u015B\u0107, Niepok\u00F3j, Zale\u017Cno\u015B\u0107, Sentymentalno\u015B\u0107. Wg Ashtona i Lee (2007) ten wymiar odzwierciedla ewolucyjne tendencje zwi\u0105zane z altruizmem krewniaczym (kin altruism).",
+  highDesc:"Osoby z wy\u017Cszym wynikiem silniej reaguj\u0105 emocjonalnie na sytuacje stresowe i zagra\u017Caj\u0105ce. Ceni\u0105 blisko\u015B\u0107 i wsparcie emocjonalne od innych. Odznaczaj\u0105 si\u0119 wi\u0119ksz\u0105 empati\u0105 i wrażliwo\u015Bci\u0105 na stany emocjonalne otoczenia.",
+  lowDesc:"Osoby z ni\u017Cszym wynikiem zachowuj\u0105 wi\u0119kszy dystans emocjonalny w sytuacjach trudnych. Rzadziej poszukuj\u0105 wsparcia \u2014 preferuj\u0105 samodzielne radzenie sobie. Mniej intensywnie reaguj\u0105 na bod\u017Ace emocjonalne, co u\u0142atwia dzia\u0142anie pod presj\u0105.",
+  leaderFindings:[
+    {stat:"Stabilno\u015B\u0107 emocjonalna \u2192 przyw\u00F3dztwo: \u03C1 = .24",desc:"W klasycznym modelu Big Five stabilno\u015B\u0107 emocjonalna (odwr\u00F3cony neurotyzm) koreluje umiarkowanie z przyw\u00F3dztwem. Osoby stabilne emocjonalnie cz\u0119\u015Bciej emerguj\u0105 jako liderzy i s\u0105 postrzegane jako bardziej efektywne.",src:"Judge, Bono, Ilies & Gerhardt (2002)"},
+    {stat:"E \u2192 humble leadership: \u03B2 = .35, p < .001",desc:"W badaniu HEXACO \u00D7 humble leadership, Emocjonalno\u015B\u0107 okaza\u0142a si\u0119 najsilniejszym predyktorem pokory liderskiej spo\u015Br\u00F3d wszystkich sze\u015Bciu wymiar\u00F3w. Autorzy t\u0142umacz\u0105 to zdolno\u015Bci\u0105 os\u00F3b z wy\u017Csz\u0105 Emocjonalno\u015Bci\u0105 do dostrzegania perspektywy innych i budowania wi\u0119zi.",src:"Hassan, Malik, Raza et al. (2023)"},
+    {stat:"Stabilno\u015B\u0107 em. \u2192 zachowania wspieraj\u0105ce (Consideration)",desc:"Stabilno\u015B\u0107 emocjonalna dzia\u0142a na efektywno\u015B\u0107 lidersk\u0105 po\u015Brednio \u2014 poprzez zachowania wspieraj\u0105ce (Consideration). Liderzy stabilni emocjonalnie cz\u0119\u015Bciej przejawiaj\u0105 zachowania opiekuńcze wobec zespo\u0142u.",src:"DeRue, Nahrgang, Wellman & Humphrey (2011)"},
+    {stat:"Najwy\u017Csza r\u00F3\u017Cnica p\u0142ciowa: d = 0.92\u20131.23",desc:"Emocjonalno\u015B\u0107 to wymiar HEXACO z najwy\u017Csz\u0105 r\u00F3\u017Cnic\u0105 mi\u0119dzy kobietami a m\u0119\u017Czyznami \u2014 kobiety uzyskuj\u0105 istotnie wy\u017Csze wyniki. Jest to fakt empiryczny, nie warto\u015Bciuj\u0105cy.",src:"Ashton & Lee (2009); Lee & Ashton (2018)"}
+  ]
+},
+X:{name:"Ekstrawersja",nameEN:"Extraversion",items:[4,10,16,22,28,34,40,46,52,58],reversed:[10,28,46,52],color:"#4A90B8",
+  desc:"Wymiar opisuj\u0105cy poziom energii spo\u0142ecznej, pewno\u015Bci siebie, inicjatywy w kontaktach i og\u00F3lnej \u017Cywotno\u015Bci. Facety: Samoocena spo\u0142eczna, \u015Amia\u0142o\u015B\u0107 spo\u0142eczna, Towarzysko\u015B\u0107, \u017Bywotno\u015B\u0107.",
+  highDesc:"Osoby z wy\u017Cszym wynikiem czerpią energi\u0119 z kontakt\u00F3w spo\u0142ecznych, ch\u0119tnie przejmuj\u0105 inicjatyw\u0119 i czuj\u0105 si\u0119 komfortowo w centrum uwagi. Opisywane s\u0105 jako energiczne i optymistyczne.",
+  lowDesc:"Osoby z ni\u017Cszym wynikiem preferuj\u0105 mniejsze grupy lub prac\u0119 indywidualn\u0105. Rzadziej wyst\u0119puj\u0105 z inicjatyw\u0105 w du\u017Cych grupach. Cechuje je wi\u0119ksza pow\u015Bci\u0105gliwo\u015B\u0107 i refleksyjno\u015B\u0107 w kontaktach.",
+  leaderFindings:[
+    {stat:"X \u2192 przyw\u00F3dztwo: \u03C1 = .31 (najsilniejszy predyktor Big Five)",desc:"W meta-analizie 73 bada\u0144 (N > 25\u00A0000) Ekstrawersja okaza\u0142a si\u0119 najsilniejszym predyktorem przyw\u00F3dztwa spo\u015Br\u00F3d pi\u0119ciu czynnik\u00F3w Big Five \u2014 zar\u00F3wno emergencji liderskiej, jak i efektywno\u015Bci.",src:"Judge, Bono, Ilies & Gerhardt (2002)"},
+    {stat:"X \u2192 efektywno\u015B\u0107 lidera: \u03C1 = .24",desc:"W nowszej meta-analizie obejmuj\u0105cej model HEXACO korelacja Ekstrawersji z efektywno\u015Bci\u0105 lidersk\u0105 wynosi \u03C1 = .24. Efekt ten jest silniejszy w kulturach kolektywistycznych (\u03C1 wzrasta z .14 do .24).",src:"Javalagi, Newman & Li (2024)"},
+    {stat:"X \u2192 humble leadership: nieistotny (\u03B2 = \u2013.04, p = .50)",desc:"Co interesuj\u0105ce, Ekstrawersja nie przewiduje istotnie pokory liderskiej (humble leadership). Sugeruje to, \u017Ce inna \u015Bcie\u017Cka do efektywno\u015Bci \u2014 przez pokor\u0119 \u2014 nie wymaga wysokiej Ekstrawersji.",src:"Hassan, Malik, Raza et al. (2023)"},
+    {stat:"Zmiana osobowo\u015Bci: \u2191X przed obj\u0119ciem roli, \u2193X po",desc:"Dane pod\u0142u\u017Cne (N > 36\u00A0000) pokazuj\u0105, \u017Ce osoby zbli\u017Caj\u0105ce si\u0119 do obj\u0119cia roli lidera staj\u0105 si\u0119 bardziej ekstrawertywne, ale po obj\u0119ciu roli ich Ekstrawersja nieznacznie spada. Sugeruje to efekty zar\u00F3wno selekcji, jak i socjalizacji.",src:"Asselmann, Holst & Specht (2022)"}
+  ]
+},
+A:{name:"Ugodowo\u015B\u0107",nameEN:"Agreeableness",items:[3,9,15,21,27,33,39,45,51,57],reversed:[9,15,21,57],color:"#4A7C59",
+  desc:"Wymiar opisuj\u0105cy sk\u0142onno\u015B\u0107 do przebaczania, cierpliwo\u015Bci, \u0142agodno\u015Bci i elastyczno\u015Bci w relacjach z innymi. Facety: Przebaczanie, \u0141agodno\u015B\u0107, Elastyczno\u015B\u0107, Cierpliwo\u015B\u0107. W modelu HEXACO wymiar ten jest w\u0119\u017Cszy ni\u017C w Big Five \u2014 nie zawiera tre\u015Bci zwi\u0105zanych z Uczciwo\u015Bci\u0105-Pokor\u0105.",
+  highDesc:"Osoby z wy\u017Cszym wynikiem \u0142atwiej przebaczaj\u0105, s\u0105 cierpliwsze i ch\u0119tniej szukaj\u0105 kompromisu. Rzadziej reaguj\u0105 gniewem i s\u0105 sk\u0142onne do ust\u0119pstw w imi\u0119 relacji.",
+  lowDesc:"Osoby z ni\u017Cszym wynikiem s\u0105 bardziej bezpo\u015Brednie krytyczne i wymagaj\u0105ce. Trudniej im przebaczy\u0107, \u0142atwiej wyra\u017Caj\u0105 niezadowolenie. Cechuje je wi\u0119ksza stanowczo\u015B\u0107 i gotowo\u015B\u0107 do konfrontacji.",
+  leaderFindings:[
+    {stat:"A \u2192 przyw\u00F3dztwo: \u03C1 = .08",desc:"W meta-analizie Big Five, Ugodowo\u015B\u0107 okazuje si\u0119 najs\u0142abszym predyktorem przyw\u00F3dztwa. Autorzy t\u0142umacz\u0105 to tym, \u017Ce zar\u00F3wno wysoka (kompromisowo\u015B\u0107), jak i niska (stanowczo\u015B\u0107) Ugodowo\u015B\u0107 mog\u0105 sprzyja\u0107 r\u00F3\u017Cnym stylom przyw\u00F3dztwem.",src:"Judge, Bono, Ilies & Gerhardt (2002)"},
+    {stat:"A \u2192 humble leadership: \u03B2 = .17, p < .001",desc:"Ugodowo\u015B\u0107 jest istotnym predyktorem pokory liderskiej. Osoby bardziej ugodowe cz\u0119\u015Bciej doceniaj\u0105 wk\u0142ad innych i s\u0105 otwarte na ich perspektywy.",src:"Hassan, Malik, Raza et al. (2023)"},
+    {stat:"Efekt kultury: \u03C1 = .12 \u2192 .19 w kulturach kolektywistycznych",desc:"Znaczenie Ugodowo\u015Bci dla przyw\u00F3dztwa jest istotnie silniejsze w kulturach kolektywistycznych ni\u017C indywidualistycznych. W kulturach ceni\u0105cych harmoni\u0119 grupow\u0105 Ugodowo\u015B\u0107 lidera ma wi\u0119ksze znaczenie.",src:"Javalagi, Newman & Li (2024)"},
+    {stat:"A \u2192 Consideration (mediacja behawioralna)",desc:"Ugodowo\u015B\u0107 przek\u0142ada si\u0119 na efektywno\u015B\u0107 lidersk\u0105 po\u015Brednio \u2014 przez zachowania wspieraj\u0105ce (Consideration). Osoby ugodowe cz\u0119\u015Bciej przejawiaj\u0105 zachowania buduj\u0105ce relacje z zespo\u0142em.",src:"Javalagi, Newman & Li (2024)"}
+  ]
+},
+C:{name:"Sumienno\u015B\u0107",nameEN:"Conscientiousness",items:[2,8,14,20,26,32,38,44,50,56],reversed:[14,20,26,32,44,56],color:"#2E8B8B",
+  desc:"Wymiar opisuj\u0105cy poziom organizacji, systematyczno\u015Bci, dok\u0142adno\u015Bci i rozwagi w dzia\u0142aniu. Facety: Organizacja, Pracowito\u015B\u0107, Perfekcjonizm, Rozwaga.",
+  highDesc:"Osoby z wy\u017Cszym wynikiem funkcjonuj\u0105 w spos\u00F3b zorganizowany i metodyczny. Planuj\u0105, dbaj\u0105 o szczeg\u00F3\u0142y i dotrzymuj\u0105 termin\u00F3w. Preferuj\u0105 struktur\u0119 i przewidywalno\u015B\u0107.",
+  lowDesc:"Osoby z ni\u017Cszym wynikiem funkcjonuj\u0105 bardziej spontanicznie i elastycznie. \u0141atwiej toleruj\u0105 brak struktury i ch\u0119tniej improwizuj\u0105. Mog\u0105 szybciej adaptowa\u0107 si\u0119 do zmieniaj\u0105cych si\u0119 warunk\u00F3w.",
+  leaderFindings:[
+    {stat:"C \u2192 przyw\u00F3dztwo: \u03C1 = .28 (drugi najsilniejszy predyktor Big Five)",desc:"Sumienno\u015B\u0107 to drugi najsilniejszy predyktor przyw\u00F3dztwa w modelu Big Five, po Ekstrawersji. Koreluje zar\u00F3wno z emergencj\u0105 lidersk\u0105, jak i z postrzegan\u0105 efektywno\u015Bci\u0105.",src:"Judge, Bono, Ilies & Gerhardt (2002)"},
+    {stat:"C \u2192 humble leadership: \u03B2 = .33, p < .001",desc:"Sumienno\u015B\u0107 jest drugim najsilniejszym predyktorem pokory liderskiej (po Emocjonalno\u015Bci). Sumienny lider, kt\u00F3ry starannie realizuje zadania, mo\u017Ce by\u0107 postrzegany jako pokorny przez konsekwentne wywi\u0105zywanie si\u0119 z obowi\u0105zk\u00F3w.",src:"Hassan, Malik, Raza et al. (2023)"},
+    {stat:"C \u2192 Initiating Structure (mediacja behawioralna)",desc:"Sumienno\u015B\u0107 przek\u0142ada si\u0119 na efektywno\u015B\u0107 lidersk\u0105 poprzez zachowania strukturyzuj\u0105ce (Initiating Structure) \u2014 ustalanie cel\u00F3w, planowanie, organizowanie pracy zespo\u0142u.",src:"DeRue et al. (2011); Javalagi et al. (2024)"},
+    {stat:"Zmiana po obj\u0119ciu roli: \u2193C",desc:"Dane pod\u0142u\u017Cne wskazuj\u0105, \u017Ce po obj\u0119ciu roli lidera Sumienno\u015B\u0107 nieznacznie spada. Mo\u017Cliwe wyja\u015Bnienie: liderzy ucz\u0105 si\u0119 delegowa\u0107 i mniej kontrolowa\u0107 szczeg\u00F3\u0142y.",src:"Asselmann, Holst & Specht (2022)"}
+  ]
+},
+O:{name:"Otwarto\u015B\u0107",nameEN:"Openness to Experience",items:[1,7,13,19,25,31,37,43,49,55],reversed:[1,19,31,49,55],color:"#8B6BAE",
+  desc:"Wymiar opisuj\u0105cy zainteresowanie sztuk\u0105, ide\u0105mi, wyobra\u017Ani\u0105 i niekonwencjonalnym my\u015Bleniem. Facety: Wra\u017Cliwo\u015B\u0107 estetyczna, Dociekliwo\u015B\u0107, Kreatywno\u015B\u0107, Niekonwencjonalno\u015B\u0107.",
+  highDesc:"Osoby z wy\u017Cszym wynikiem ch\u0119tnie eksploruj\u0105 nowe idee, s\u0105 ciekawe intelektualnie i otwarte na niekonwencjonalne rozwi\u0105zania. Interesuj\u0105 si\u0119 sztuk\u0105, filozofi\u0105 i abstrakcyjnym my\u015Bleniem.",
+  lowDesc:"Osoby z ni\u017Cszym wynikiem preferuj\u0105 sprawdzone i praktyczne podej\u015Bcia. S\u0105 bardziej konwencjonalne i pragmatyczne. Skupiaj\u0105 si\u0119 na tym, co konkretne i mo\u017Cliwe do wdro\u017Cenia.",
+  leaderFindings:[
+    {stat:"O \u2192 przyw\u00F3dztwo: \u03C1 = .24",desc:"Otwarto\u015B\u0107 na do\u015Bwiadczenie koreluje umiarkowanie z przyw\u00F3dztwem. Osoby otwarte s\u0105 cz\u0119\u015Bciej postrzegane jako wizjonerskie i innowacyjne, co sprzyja emergencji liderskiej.",src:"Judge, Bono, Ilies & Gerhardt (2002)"},
+    {stat:"O \u2192 humble leadership: \u03B2 = \u2013.23, p < .001 (negatywny!)",desc:"Otwarto\u015B\u0107 koreluje negatywnie z pokor\u0105 lidersk\u0105. Autorzy sugeruj\u0105, \u017Ce silna koncentracja na w\u0142asnej wizji i ideach mo\u017Ce utrudnia\u0107 przyjmowanie pokornej postawy wobec perspektyw innych os\u00F3b.",src:"Hassan, Malik, Raza et al. (2023)"},
+    {stat:"O \u2192 Initiating Structure (mediacja pozytywna)",desc:"Otwarto\u015B\u0107 dzia\u0142a na efektywno\u015B\u0107 lidersk\u0105 po\u015Brednio przez zachowania strukturyzuj\u0105ce \u2014 otwarci liderzy wprowadzaj\u0105 innowacyjne sposoby organizacji pracy.",src:"Javalagi, Newman & Li (2024)"},
+    {stat:"Zmiana przed rol\u0105 lidera: \u2191O",desc:"Osoby zbli\u017Caj\u0105ce si\u0119 do obj\u0119cia roli liderskiej staj\u0105 si\u0119 bardziej otwarte na do\u015Bwiadczenia. To zgodne z interpretacj\u0105 Zaccaro (2007), \u017Ce Otwarto\u015B\u0107 nale\u017Cy do \u201Eproksymalnych\u201D cech poznawczych niezb\u0119dnych w roli lidera.",src:"Asselmann et al. (2022); Zaccaro (2007)"}
+  ]
+}
+};
+
+var responses={};
+var scaleOrder=["H","E","X","A","C","O"];
+
+function renderQuestions(){
+  var c=document.getElementById("questions-container");
+  if(!c)return;
+  var h="";
+  for(var i=1;i<=60;i++){
+    h+='<div class="question-card" id="q'+i+'">';
+    h+='<div class="q-number">'+i+' / 60</div>';
+    h+='<div class="q-text">'+ITEMS[i]+'</div>';
+    h+='<div class="likert">';
+    for(var v=1;v<=5;v++) h+='<button type="button" class="likert-btn" data-q="'+i+'" data-v="'+v+'">'+v+'</button>';
+    h+='</div><div class="likert-labels"><span>zdecydowanie nie</span><span>neutralnie</span><span>zdecydowanie tak</span></div></div>';
+  }
+  c.innerHTML=h;
+  var btns=c.querySelectorAll(".likert-btn");
+  for(var b=0;b<btns.length;b++){
+    btns[b].addEventListener("click",function(){
+      var q=parseInt(this.getAttribute("data-q"));
+      var v=parseInt(this.getAttribute("data-v"));
+      responses[q]=v;
+      var card=document.getElementById("q"+q);
+      card.classList.add("answered");
+      var sibs=card.querySelectorAll(".likert-btn");
+      for(var s=0;s<sibs.length;s++) sibs[s].classList.remove("selected");
+      this.classList.add("selected");
+      updateProgress();
+    });
+  }
+}
+
+function updateProgress(){
+  var a=Object.keys(responses).length;
+  var pct=Math.round((a/60)*100);
+  document.getElementById("progressFill").style.width=pct+"%";
+  document.getElementById("progressText").textContent=a+" / 60";
+  var btn=document.getElementById("submitBtn");
+  var hint=document.getElementById("submitHint");
+  var ready=ADMIN_MODE?a>=1:a>=60;
+  btn.disabled=!ready;
+  if(a>=60) hint.textContent="\u2705 Gotowe! Kliknij, aby zobaczy\u0107 wyniki.";
+  else if(ADMIN_MODE&&a>=1) hint.textContent="\u{1F527} Tryb testowy: mo\u017Cesz przes\u0142a\u0107 ("+a+"/60, reszta = 3)";
+  else hint.textContent="Pozosta\u0142o jeszcze "+(60-a)+" pyta\u0144";
+}
+
+function calculateResults(){
+  if(!ADMIN_MODE){
+    for(var i=1;i<=60;i++){
+      if(!responses[i]){
+        var el=document.getElementById("q"+i);
+        el.classList.add("highlighted");
+        el.scrollIntoView({behavior:"smooth",block:"center"});
+        setTimeout(function(e){e.classList.remove("highlighted");},1500,el);
+        return;
+      }
+    }
+  }
+  var scores={};
+  for(var k=0;k<scaleOrder.length;k++){
+    var key=scaleOrder[k];
+    var sc=SCALES[key];
+    var sum=0;
+    for(var j=0;j<sc.items.length;j++){
+      var itemNum=sc.items[j];
+      var val=responses[itemNum]||3;
+      if(sc.reversed.indexOf(itemNum)!==-1) val=6-val;
+      sum+=val;
+    }
+    scores[key]=parseFloat((sum/10).toFixed(2));
+  }
+  document.getElementById("questionnaire-section").style.display="none";
+  document.getElementById("results-section").classList.add("visible");
+  window.scrollTo({top:0});
+  window._lastScores=scores;
+  drawRadar(scores);
+  renderScaleCards(scores);
+}
+
+function drawRadar(scores){
+  var canvas=document.getElementById("radarChart");
+  var ctx=canvas.getContext("2d");
+  var dpr=window.devicePixelRatio||1;
+  var size=Math.min(canvas.parentElement.clientWidth-40,340);
+  canvas.width=size*dpr;canvas.height=size*dpr;
+  canvas.style.width=size+"px";canvas.style.height=size+"px";
+  ctx.scale(dpr,dpr);
+  var cx=size/2,cy=size/2,maxR=size/2-50,n=6;
+  function gXY(i,r){var a=(Math.PI*2*i/n)-Math.PI/2;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+  for(var lv=1;lv<=5;lv++){
+    var r=(lv/5)*maxR;ctx.beginPath();
+    for(var i=0;i<=n;i++){var p=gXY(i%n,r);if(i===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);}
+    ctx.closePath();ctx.strokeStyle="rgba(197,165,90,.15)";ctx.lineWidth=1;ctx.stroke();
+    var lp=gXY(0,r);ctx.fillStyle=document.body.classList.contains("light-mode")?"rgba(50,50,60,.5)":"rgba(138,155,176,.5)";ctx.font="9px sans-serif";ctx.textAlign="center";
+    ctx.fillText(lv.toFixed(1),lp[0],lp[1]-4);
+  }
+  for(var i=0;i<n;i++){var p=gXY(i,maxR);ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p[0],p[1]);ctx.strokeStyle="rgba(197,165,90,.2)";ctx.lineWidth=1;ctx.stroke();}
+  ctx.beginPath();
+  for(var i=0;i<=n;i++){var key=scaleOrder[i%n];var val=scores[key];var r2=(val/5)*maxR;var p=gXY(i%n,r2);if(i===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);}
+  ctx.closePath();ctx.fillStyle="rgba(46,139,139,.25)";ctx.fill();ctx.strokeStyle="rgba(46,139,139,.8)";ctx.lineWidth=2.5;ctx.stroke();
+  for(var i=0;i<n;i++){
+    var key=scaleOrder[i];var val=scores[key];var r3=(val/5)*maxR;var p=gXY(i,r3);
+    ctx.beginPath();ctx.arc(p[0],p[1],5,0,Math.PI*2);ctx.fillStyle=SCALES[key].color;ctx.fill();ctx.strokeStyle="#fff";ctx.lineWidth=1.5;ctx.stroke();
+    var vp=gXY(i,r3+14);ctx.fillStyle=document.body.classList.contains("light-mode")?"#2C2C2C":"#fff";ctx.font="bold 11px sans-serif";ctx.textAlign="center";ctx.fillText(val.toFixed(1),vp[0],vp[1]+4);
+    var lp2=gXY(i,maxR+32);ctx.fillStyle=SCALES[key].color;ctx.font="bold 10px sans-serif";ctx.textAlign="center";ctx.fillText(key+": "+SCALES[key].name,lp2[0],lp2[1]+4);
+  }
+}
+
+function renderScaleCards(scores){
+  var c=document.getElementById("scale-results");
+  var h="";
+  for(var k=0;k<scaleOrder.length;k++){
+    var key=scaleOrder[k];
+    var s=SCALES[key];
+    var val=scores[key];
+    var pct=((val/5)*100).toFixed(0);
+    var uid="expand-"+key;
+    h+='<div class="scale-card" style="border-left-color:'+s.color+'">';
+    h+='<div class="scale-header"><div><span class="scale-name" style="color:'+s.color+'">'+s.name+'</span>';
+    h+='<span style="color:var(--muted);font-size:.7rem;margin-left:8px;">'+s.nameEN+'</span></div>';
+    h+='<div class="scale-score" style="color:'+s.color+'">'+val.toFixed(1)+'</div></div>';
+    h+='<div class="scale-bar-bg"><div class="scale-bar-fill" style="width:'+pct+'%;background:'+s.color+'"></div></div>';
+    h+='<div class="scale-desc">'+s.desc+'</div>';
+    h+='<div class="high-low">';
+    h+='<div class="hl-box hl-high"><div class="hl-label" style="color:var(--blue);">\u2191 Wy\u017Csze nat\u0119\u017Cenie</div>'+s.highDesc+'</div>';
+    h+='<div class="hl-box hl-low"><div class="hl-label" style="color:var(--purple);">\u2193 Ni\u017Csze nat\u0119\u017Cenie</div>'+s.lowDesc+'</div>';
+    h+='</div>';
+    // Expandable leadership findings
+    h+='<button type="button" class="expand-btn" onclick="toggleExpand(\''+uid+'\')">';
+    h+='<span class="expand-arrow" id="arrow-'+uid+'">\u25B6</span> Korelacje z przyw\u00F3dztwem \u2014 dane z meta-analiz</button>';
+    h+='<div class="expand-content" id="'+uid+'"><div class="expand-inner">';
+    for(var f=0;f<s.leaderFindings.length;f++){
+      var finding=s.leaderFindings[f];
+      h+='<div class="finding-row">';
+      h+='<div class="finding-stat">'+finding.stat+'</div>';
+      h+='<div class="finding-desc">'+finding.desc+'</div>';
+      h+='<div class="finding-src">'+finding.src+'</div>';
+      h+='</div>';
+    }
+    h+='<div class="expand-note">Dane pochodz\u0105 z recenzowanych meta-analiz i bada\u0144 empirycznych. Korelacje (\u03C1) podane s\u0105 po korekcie na rzetelno\u015B\u0107. Warto\u015Bci \u03B2 to standaryzowane wsp\u00F3\u0142czynniki regresji.</div>';
+    h+='</div></div>';
+    h+='</div>';
+  }
+  c.innerHTML=h;
+}
+
+window.toggleExpand=function(id){
+  var el=document.getElementById(id);
+  var arrow=document.getElementById("arrow-"+id);
+  el.classList.toggle("open");
+  arrow.classList.toggle("open");
+};
+
+function resetQuiz(){
+  for(var key in responses) delete responses[key];
+  document.getElementById("results-section").classList.remove("visible");
+  document.getElementById("questionnaire-section").style.display="block";
+  var btns=document.querySelectorAll(".likert-btn");
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove("selected");
+  var cards=document.querySelectorAll(".question-card");
+  for(var i=0;i<cards.length;i++) cards[i].classList.remove("answered");
+  updateProgress();
+  window.scrollTo({top:0});
+}
+
+document.addEventListener("DOMContentLoaded",function(){
+  if(!ADMIN_MODE){var ab=document.getElementById("adminBanner");if(ab)ab.style.display="none";}
+  renderQuestions();
+  document.getElementById("submitBtn").addEventListener("click",calculateResults);
+  document.getElementById("resetBtn").addEventListener("click",resetQuiz);
+  document.getElementById("scrollTopBtn").addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});
+  window.addEventListener("scroll",function(){document.getElementById("scrollTopBtn").style.display=window.scrollY>600?"block":"none";});
+});
+
+})();
+
+// ===== HAMBURGER MENU =====
+(function(){
+  var hamburger=document.getElementById("hamburgerBtn");
+  var sideMenu=document.getElementById("sideMenu");
+  var overlay=document.getElementById("menuOverlay");
+  
+  function openMenu(){ sideMenu.classList.add("open"); overlay.classList.add("visible"); hamburger.classList.add("open"); }
+  function closeMenu(){ sideMenu.classList.remove("open"); overlay.classList.remove("visible"); hamburger.classList.remove("open"); }
+  
+  hamburger.addEventListener("click",function(){ sideMenu.classList.contains("open")?closeMenu():openMenu(); });
+  overlay.addEventListener("click",closeMenu);
+  
+  // ===== FONT TOGGLE =====
+  var fontBtn=document.getElementById("toggleFont");
+  var fontStatus=document.getElementById("fontStatus");
+  function applyFont(on){
+    document.body.classList.toggle("large-font",on);
+    fontStatus.textContent=on?"ON":"OFF";
+    fontStatus.className="menu-status "+(on?"on":"off");
+    localStorage.setItem("hexaco-large-font",on?"1":"0");
+  }
+  fontBtn.addEventListener("click",function(){
+    applyFont(!document.body.classList.contains("large-font"));
+  });
+  
+  // ===== THEME TOGGLE =====
+  var themeBtn=document.getElementById("toggleTheme");
+  var themeStatus=document.getElementById("themeStatus");
+  var themeIcon=themeBtn.querySelector(".menu-icon");
+  function applyTheme(light){
+    document.body.classList.toggle("light-mode",light);
+    themeStatus.textContent=light?"ON":"OFF";
+    themeStatus.className="menu-status "+(light?"on":"off");
+    themeIcon.textContent=light?"🌙":"☀️";
+    themeBtn.querySelector(".menu-label").textContent=light?"Ciemny motyw":"Jasny motyw";
+    localStorage.setItem("hexaco-light-mode",light?"1":"0");
+    // Redraw radar if visible
+    if(document.getElementById("results-section").classList.contains("visible")){
+      var event=new CustomEvent("themeChanged");
+      document.dispatchEvent(event);
+    }
+  }
+  themeBtn.addEventListener("click",function(){
+    applyTheme(!document.body.classList.contains("light-mode"));
+  });
+  
+  // Restore from localStorage
+  if(localStorage.getItem("hexaco-large-font")==="1") applyFont(true);
+  if(localStorage.getItem("hexaco-light-mode")==="1") applyTheme(true);
+})();
+
+// ===== PDF EXPORT (html2canvas + jsPDF, loaded on demand) =====
+(function(){
+  var exportBtn=document.getElementById("exportPdfBtn");
+  if(!exportBtn)return;
+  
+  function loadScript(src){
+    return new Promise(function(resolve,reject){
+      var s=document.createElement("script");
+      s.src=src; s.onload=resolve; s.onerror=reject;
+      document.head.appendChild(s);
+    });
+  }
+  
+  exportBtn.addEventListener("click",function(){
+    var btn=this;
+    btn.disabled=true;
+    btn.textContent="⏳ Generuję PDF...";
+    
+    var libs=[];
+    if(typeof html2canvas==="undefined") libs.push(loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"));
+    if(typeof jspdf==="undefined"&&typeof jsPDF==="undefined") libs.push(loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"));
+    
+    Promise.all(libs).then(function(){
+      var resultsEl=document.getElementById("results-section");
+      // Temporarily expand all sections for PDF
+      var expandEls=resultsEl.querySelectorAll(".expand-content");
+      var wasOpen=[];
+      for(var i=0;i<expandEls.length;i++){
+        wasOpen.push(expandEls[i].classList.contains("open"));
+        expandEls[i].classList.add("open");
+        expandEls[i].style.maxHeight="none";
+      }
+      // Hide export button and reset button during capture
+      var exportSec=document.getElementById("exportSection");
+      var resetBtnEl=document.getElementById("resetBtn");
+      if(exportSec) exportSec.style.display="none";
+      if(resetBtnEl) resetBtnEl.parentElement.style.display="none";
+      
+      setTimeout(function(){
+        html2canvas(resultsEl,{
+          scale:2,
+          useCORS:true,
+          backgroundColor: document.body.classList.contains("light-mode")?"#F5F3EE":"#0F1923",
+          logging:false,
+          windowWidth:resultsEl.scrollWidth,
+          scrollX:0, scrollY:0
+        }).then(function(canvas){
+          var JsPDF=window.jspdf.jsPDF;
+          var imgData=canvas.toDataURL("image/jpeg",0.92);
+          var imgW=canvas.width; var imgH=canvas.height;
+          // A4: 210×297mm, margins 10mm each side → content width=190mm
+          var pdfW=190; var pdfH=(imgH*pdfW)/imgW;
+          var pageH=277; // A4 content height with margins
+          var pdf=new JsPDF("p","mm","a4");
+          
+          if(pdfH<=pageH){
+            pdf.addImage(imgData,"JPEG",10,10,pdfW,pdfH);
+          } else {
+            // Multi-page
+            var position=0;
+            var remaining=pdfH;
+            var pageNum=0;
+            while(remaining>0){
+              if(pageNum>0) pdf.addPage();
+              // Calculate source crop
+              var srcY=(position/pdfH)*imgH;
+              var srcH=Math.min((pageH/pdfH)*imgH, imgH-srcY);
+              var drawH=Math.min(pageH, remaining);
+              
+              // Create temp canvas for this page slice
+              var tmpCanvas=document.createElement("canvas");
+              tmpCanvas.width=imgW; tmpCanvas.height=srcH;
+              var tmpCtx=tmpCanvas.getContext("2d");
+              tmpCtx.drawImage(canvas,0,srcY,imgW,srcH,0,0,imgW,srcH);
+              var sliceData=tmpCanvas.toDataURL("image/jpeg",0.92);
+              pdf.addImage(sliceData,"JPEG",10,10,pdfW,drawH);
+              
+              position+=pageH;
+              remaining-=pageH;
+              pageNum++;
+            }
+          }
+          pdf.save("HEXACO_Profil.pdf");
+          
+          // Restore expand states
+          for(var i=0;i<expandEls.length;i++){
+            if(!wasOpen[i]){
+              expandEls[i].classList.remove("open");
+              expandEls[i].style.maxHeight="";
+            } else {
+              expandEls[i].style.maxHeight="";
+            }
+          }
+          if(exportSec) exportSec.style.display="";
+          if(resetBtnEl) resetBtnEl.parentElement.style.display="";
+          btn.disabled=false;
+          btn.textContent="📄 Eksportuj profil do PDF";
+        }).catch(function(err){
+          console.error("PDF error:",err);
+          alert("Nie udało się wygenerować PDF. Spróbuj ponownie.");
+          // Restore
+          for(var i=0;i<expandEls.length;i++){
+            if(!wasOpen[i]){ expandEls[i].classList.remove("open"); expandEls[i].style.maxHeight=""; }
+            else { expandEls[i].style.maxHeight=""; }
+          }
+          if(exportSec) exportSec.style.display="";
+          if(resetBtnEl) resetBtnEl.parentElement.style.display="";
+          btn.disabled=false;
+          btn.textContent="📄 Eksportuj profil do PDF";
+        });
+      },500); // wait for expand animation
+    }).catch(function(err){
+      console.error("Script load error:",err);
+      alert("Nie udało się załadować bibliotek. Sprawdź połączenie z internetem.");
+      btn.disabled=false;
+      btn.textContent="📄 Eksportuj profil do PDF";
+    });
+  });
+})();
+
+
+// Theme-aware radar redraw
+document.addEventListener("themeChanged",function(){
+  // We need to redraw the radar with the correct text colors
+  var canvas=document.getElementById("radarChart");
+  if(!canvas)return;
+  // Trigger a recalculation by re-running with stored scores
+  if(window._lastScores) drawRadar(window._lastScores);
+});
+
+</script>
+</body>
+</html>
