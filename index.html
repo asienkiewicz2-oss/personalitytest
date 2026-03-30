@@ -85,112 +85,75 @@ body.light-mode {
   --gold:#8B6F2E; --navy:#1B2A4A; --teal:#1E7070; --coral:#B54040;
   --green:#3A6648; --blue:#3070A0; --purple:#6B4E8E;
 }
-body.light-mode .progress-bar-container { background:var(--bg); }
-body.light-mode .likert-btn { background:var(--card2); color:var(--muted); border-color:var(--border); }
-body.light-mode .likert-btn:hover { border-color:var(--teal); color:var(--text); }
-body.light-mode .likert-btn.selected { background:var(--teal); border-color:var(--teal); color:#fff; }
-body.light-mode .submit-btn { background:linear-gradient(135deg,var(--gold),#A08940); color:#fff; }
-body.light-mode .scroll-top { background:var(--gold); color:#fff; }
-body.light-mode .admin-banner { background:rgba(181,64,64,.1); border-color:var(--coral); color:var(--coral); }
-body.light-mode canvas { filter: none; }
+body.light-mode .progress-bar-container{background:var(--bg)}
+body.light-mode .likert-btn{background:var(--card2);color:var(--muted);border-color:var(--border)}
+body.light-mode .likert-btn:hover{border-color:var(--teal);color:var(--text)}
+body.light-mode .likert-btn.selected{background:var(--teal);border-color:var(--teal);color:#fff}
+body.light-mode .submit-btn{background:linear-gradient(135deg,var(--gold),#A08940);color:#fff}
+body.light-mode .scroll-top{background:var(--gold);color:#fff}
+body.light-mode .admin-banner{background:rgba(181,64,64,.1);border-color:var(--coral);color:var(--coral)}
 
-/* ===== LARGE FONT MODE ===== */
-body.large-font { font-size:118%; }
-body.large-font .q-text { font-size:1.05rem; }
-body.large-font .likert-btn { font-size:1rem; padding:12px 6px; }
-body.large-font .scale-desc, body.large-font .hl-box { font-size:.92rem; }
-body.large-font .finding-desc { font-size:.88rem; }
-body.large-font .expand-inner { font-size:.9rem; }
-body.large-font .intro-card p { font-size:.95rem; }
+/* ===== LARGE FONT ===== */
+body.large-font{font-size:118%}
+body.large-font .q-text{font-size:1.05rem}
+body.large-font .likert-btn{font-size:1rem;padding:12px 6px}
+body.large-font .scale-desc,body.large-font .hl-box{font-size:.92rem}
+body.large-font .finding-desc{font-size:.88rem}
+body.large-font .expand-inner{font-size:.9rem}
+body.large-font .intro-card p{font-size:.95rem}
 
-/* ===== HAMBURGER MENU ===== */
-.hamburger-btn {
-  position:fixed; top:12px; left:12px; z-index:1000;
-  background:rgba(197,165,90,.15); border:1px solid var(--border);
-  border-radius:8px; width:40px; height:40px; cursor:pointer;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:4px; transition:background .2s; -webkit-tap-highlight-color:transparent;
-}
-.hamburger-btn:hover { background:rgba(197,165,90,.3); }
-.hamburger-btn span { display:block; width:20px; height:2px; background:var(--gold); border-radius:1px; transition:all .3s; }
-.hamburger-btn.open span:nth-child(1) { transform:rotate(45deg) translate(4px,4px); }
-.hamburger-btn.open span:nth-child(2) { opacity:0; }
-.hamburger-btn.open span:nth-child(3) { transform:rotate(-45deg) translate(4px,-4px); }
+/* ===== HAMBURGER ===== */
+.hamburger-btn{position:fixed;top:12px;left:12px;z-index:1000;background:rgba(197,165,90,.15);border:1px solid var(--border);border-radius:8px;width:40px;height:40px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:background .2s;-webkit-tap-highlight-color:transparent}
+.hamburger-btn:hover{background:rgba(197,165,90,.3)}
+.hamburger-btn span{display:block;width:20px;height:2px;background:var(--gold);border-radius:1px;transition:all .3s}
+.hamburger-btn.open span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
+.hamburger-btn.open span:nth-child(2){opacity:0}
+.hamburger-btn.open span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
 
-.menu-overlay {
-  position:fixed; top:0; left:0; width:100%; height:100%;
-  background:rgba(0,0,0,.4); z-index:998; opacity:0;
-  pointer-events:none; transition:opacity .3s;
-}
-.menu-overlay.visible { opacity:1; pointer-events:auto; }
+.menu-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:998;opacity:0;pointer-events:none;transition:opacity .3s}
+.menu-overlay.visible{opacity:1;pointer-events:auto}
 
-.side-menu {
-  position:fixed; top:0; left:-280px; width:260px; height:100%;
-  background:var(--card); z-index:999; padding:60px 20px 20px;
-  transition:left .3s ease; box-shadow:4px 0 20px rgba(0,0,0,.3);
-  overflow-y:auto;
-}
-.side-menu.open { left:0; }
-.side-menu h3 { color:var(--gold); font-size:.9rem; margin-bottom:16px; text-transform:uppercase; letter-spacing:1px; }
-.menu-item {
-  display:flex; align-items:center; gap:12px;
-  padding:14px 12px; border-radius:10px; cursor:pointer;
-  transition:background .2s; margin-bottom:4px;
-  -webkit-tap-highlight-color:transparent;
-}
-.menu-item:hover { background:rgba(197,165,90,.1); }
-.menu-item .menu-icon { font-size:1.1rem; width:28px; text-align:center; flex-shrink:0; }
-.menu-item .menu-label { font-size:.85rem; color:var(--text); font-weight:500; }
-.menu-item .menu-status {
-  margin-left:auto; font-size:.7rem; padding:2px 8px;
-  border-radius:10px; font-weight:700; flex-shrink:0;
-}
-.menu-item .menu-status.on { background:rgba(46,139,139,.2); color:var(--teal); }
-.menu-item .menu-status.off { background:rgba(138,155,176,.15); color:var(--muted); }
-
-.menu-divider { height:1px; background:var(--border); margin:12px 0; }
+.side-menu{position:fixed;top:0;left:-280px;width:260px;height:100%;background:var(--card);z-index:999;padding:60px 20px 20px;transition:left .3s ease;box-shadow:4px 0 20px rgba(0,0,0,.3);overflow-y:auto}
+.side-menu.open{left:0}
+.side-menu h3{color:var(--gold);font-size:.9rem;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px}
+.menu-item{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;cursor:pointer;transition:background .2s;margin-bottom:4px;-webkit-tap-highlight-color:transparent}
+.menu-item:hover{background:rgba(197,165,90,.1)}
+.menu-item .menu-icon{font-size:1.1rem;width:28px;text-align:center;flex-shrink:0}
+.menu-item .menu-label{font-size:.85rem;color:var(--text);font-weight:500}
+.menu-item .menu-status{margin-left:auto;font-size:.7rem;padding:2px 8px;border-radius:10px;font-weight:700;flex-shrink:0}
+.menu-item .menu-status.on{background:rgba(46,139,139,.2);color:var(--teal)}
+.menu-item .menu-status.off{background:rgba(138,155,176,.15);color:var(--muted)}
+.menu-divider{height:1px;background:var(--border);margin:12px 0}
 
 /* ===== EXPORT BUTTON ===== */
-.export-section {
-  text-align:center; padding:20px 0; margin-top:8px;
-}
-.export-btn {
-  background:linear-gradient(135deg,var(--teal),#1E7070);
-  color:#fff; border:none; padding:14px 32px;
-  font-size:.9rem; font-weight:700; border-radius:12px;
-  cursor:pointer; transition:transform .2s, box-shadow .2s;
-  letter-spacing:.3px; display:inline-flex; align-items:center; gap:8px;
-}
-.export-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(46,139,139,.3); }
-.export-btn:active { transform:translateY(0); }
-.export-hint { font-size:.72rem; color:var(--muted); margin-top:8px; }
-
+.export-section{text-align:center;padding:20px 0;margin-top:8px}
+.export-btn{background:linear-gradient(135deg,var(--teal),#1E7070);color:#fff;border:none;padding:14px 32px;font-size:.9rem;font-weight:700;border-radius:12px;cursor:pointer;transition:transform .2s,box-shadow .2s;letter-spacing:.3px;display:inline-flex;align-items:center;gap:8px}
+.export-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(46,139,139,.3)}
+.export-btn:active{transform:translateY(0)}
+.export-hint{font-size:.72rem;color:var(--muted);margin-top:8px}
 </style>
 </head>
 <body>
-
 <!-- Hamburger Menu -->
-<button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
-  <span></span><span></span><span></span>
-</button>
+<button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu"><span></span><span></span><span></span></button>
 <div class="menu-overlay" id="menuOverlay"></div>
 <nav class="side-menu" id="sideMenu">
-  <h3>⚙️ Ustawienia</h3>
-  <div class="menu-item" id="toggleFont">
-    <div class="menu-icon">🔤</div>
-    <div class="menu-label">Większy font</div>
-    <div class="menu-status off" id="fontStatus">OFF</div>
-  </div>
-  <div class="menu-item" id="toggleTheme">
-    <div class="menu-icon">☀️</div>
-    <div class="menu-label">Jasny motyw</div>
-    <div class="menu-status off" id="themeStatus">OFF</div>
-  </div>
-  <div class="menu-divider"></div>
-  <div class="menu-item" style="opacity:.5;pointer-events:none;">
-    <div class="menu-icon">ℹ️</div>
-    <div class="menu-label" style="font-size:.75rem;color:var(--muted);">Ustawienia zapisują się<br>w przeglądarce</div>
-  </div>
+<h3>&#x2699;&#xFE0F; Ustawienia</h3>
+<div class="menu-item" id="toggleFont">
+<div class="menu-icon">&#x1F524;</div>
+<div class="menu-label">Wi&#x119;kszy font</div>
+<div class="menu-status off" id="fontStatus">OFF</div>
+</div>
+<div class="menu-item" id="toggleTheme">
+<div class="menu-icon">&#x2600;&#xFE0F;</div>
+<div class="menu-label">Jasny motyw</div>
+<div class="menu-status off" id="themeStatus">OFF</div>
+</div>
+<div class="menu-divider"></div>
+<div class="menu-item" style="opacity:.5;pointer-events:none;">
+<div class="menu-icon">&#x2139;&#xFE0F;</div>
+<div class="menu-label" style="font-size:.75rem;color:var(--muted);">Ustawienia zapisuj&#x105; si&#x119;<br>w przegl&#x105;darce</div>
+</div>
 </nav>
 
 <div id="questionnaire-section">
@@ -234,14 +197,12 @@ body.large-font .intro-card p { font-size:.95rem; }
   <p>HEXACO-60 to narzędzie samoopisowe mierzące tendencje osobowościowe. Wyniki <strong>nie są diagnozą</strong> &mdash; stanowią punkt wyjścia do refleksji nad własnymi preferencjami i sposobami funkcjonowania. Każdy profil niesie ze sobą specyficzne zasoby i wyzwania. Rzetelność skal: &alpha; = .73&ndash;.80 (Ashton &amp; Lee, 2009).</p>
   <p style="margin-top:8px;">Kwestionariusz HEXACO-PI-R: &copy; Kibeom Lee &amp; Michael C. Ashton. Polska adaptacja: Skimina, Strus, Cieciuch, Szarota &amp; Izdebski (2020).</p>
 </div>
-<div style="text-align:center;padding:20px 0;">
-  
 <div class="export-section" id="exportSection">
-  <button class="export-btn" id="exportPdfBtn">📄 Eksportuj profil do PDF</button>
-  <div class="export-hint">Generuje PDF z wykresem i opisami — działa offline</div>
+<button class="export-btn" id="exportPdfBtn">&#x1F4C4; Eksportuj profil do PDF</button>
+<div class="export-hint">Generuje PDF z wykresem i opisami &mdash; dzia&#x142;a offline</div>
 </div>
-
-<button class="submit-btn" id="resetBtn" style="background:linear-gradient(135deg,var(--teal),#1F6B6B);">&#x1F504; Wypełnij ponownie</button>
+<div style="text-align:center;padding:20px 0;">
+  <button class="submit-btn" id="resetBtn" style="background:linear-gradient(135deg,var(--teal),#1F6B6B);">&#x1F504; Wypełnij ponownie</button>
 </div>
 <div class="app-footer">
   HEXACO-PI-R &copy; Kibeom Lee &amp; Michael C. Ashton &middot; Ashton &amp; Lee (2009). <em>J. of Personality Assessment, 91</em>, 340&ndash;345.<br>
@@ -258,7 +219,7 @@ body.large-font .intro-card p { font-size:.95rem; }
 
 // =========================================================
 // ADMIN MODE — set to false for production version
-var ADMIN_MODE = false;
+var ADMIN_MODE = true;
 // =========================================================
 
 var ITEMS=[
@@ -569,83 +530,92 @@ document.addEventListener("DOMContentLoaded",function(){
 });
 
 })();
+</script>
+<script>
+
 
 // ===== HAMBURGER MENU =====
 (function(){
   var hamburger=document.getElementById("hamburgerBtn");
   var sideMenu=document.getElementById("sideMenu");
   var overlay=document.getElementById("menuOverlay");
-  
-  function openMenu(){ sideMenu.classList.add("open"); overlay.classList.add("visible"); hamburger.classList.add("open"); }
-  function closeMenu(){ sideMenu.classList.remove("open"); overlay.classList.remove("visible"); hamburger.classList.remove("open"); }
-  
-  hamburger.addEventListener("click",function(){ sideMenu.classList.contains("open")?closeMenu():openMenu(); });
+  function openMenu(){sideMenu.classList.add("open");overlay.classList.add("visible");hamburger.classList.add("open");}
+  function closeMenu(){sideMenu.classList.remove("open");overlay.classList.remove("visible");hamburger.classList.remove("open");}
+  hamburger.addEventListener("click",function(){sideMenu.classList.contains("open")?closeMenu():openMenu();});
   overlay.addEventListener("click",closeMenu);
-  
-  // ===== FONT TOGGLE =====
+
+  // Font toggle
   var fontBtn=document.getElementById("toggleFont");
   var fontStatus=document.getElementById("fontStatus");
   function applyFont(on){
     document.body.classList.toggle("large-font",on);
     fontStatus.textContent=on?"ON":"OFF";
     fontStatus.className="menu-status "+(on?"on":"off");
-    localStorage.setItem("hexaco-large-font",on?"1":"0");
+    try{localStorage.setItem("hexaco-large-font",on?"1":"0");}catch(e){}
   }
-  fontBtn.addEventListener("click",function(){
-    applyFont(!document.body.classList.contains("large-font"));
-  });
-  
-  // ===== THEME TOGGLE =====
+  fontBtn.addEventListener("click",function(){applyFont(!document.body.classList.contains("large-font"));});
+
+  // Theme toggle
   var themeBtn=document.getElementById("toggleTheme");
   var themeStatus=document.getElementById("themeStatus");
   var themeIcon=themeBtn.querySelector(".menu-icon");
+  var themeLabel=themeBtn.querySelector(".menu-label");
   function applyTheme(light){
     document.body.classList.toggle("light-mode",light);
     themeStatus.textContent=light?"ON":"OFF";
     themeStatus.className="menu-status "+(light?"on":"off");
-    themeIcon.textContent=light?"🌙":"☀️";
-    themeBtn.querySelector(".menu-label").textContent=light?"Ciemny motyw":"Jasny motyw";
-    localStorage.setItem("hexaco-light-mode",light?"1":"0");
-    // Redraw radar if visible
-    if(document.getElementById("results-section").classList.contains("visible")){
-      var event=new CustomEvent("themeChanged");
-      document.dispatchEvent(event);
-    }
+    themeIcon.innerHTML=light?"&#x1F319;":"&#x2600;&#xFE0F;";
+    themeLabel.textContent=light?"Ciemny motyw":"Jasny motyw";
+    try{localStorage.setItem("hexaco-light-mode",light?"1":"0");}catch(e){}
+    if(window._lastScores) drawRadar(window._lastScores);
   }
-  themeBtn.addEventListener("click",function(){
-    applyTheme(!document.body.classList.contains("light-mode"));
-  });
-  
-  // Restore from localStorage
-  if(localStorage.getItem("hexaco-large-font")==="1") applyFont(true);
-  if(localStorage.getItem("hexaco-light-mode")==="1") applyTheme(true);
+  themeBtn.addEventListener("click",function(){applyTheme(!document.body.classList.contains("light-mode"));});
+
+  // Restore settings
+  try{
+    if(localStorage.getItem("hexaco-large-font")==="1") applyFont(true);
+    if(localStorage.getItem("hexaco-light-mode")==="1") applyTheme(true);
+  }catch(e){}
 })();
 
-// ===== PDF EXPORT (html2canvas + jsPDF, loaded on demand) =====
+// ===== PDF EXPORT =====
 (function(){
   var exportBtn=document.getElementById("exportPdfBtn");
-  if(!exportBtn)return;
-  
-  function loadScript(src){
+  if(!exportBtn) return;
+
+  function loadScript(url){
     return new Promise(function(resolve,reject){
+      if(document.querySelector('script[src="'+url+'"]')){resolve();return;}
       var s=document.createElement("script");
-      s.src=src; s.onload=resolve; s.onerror=reject;
+      s.src=url;
+      s.onload=function(){resolve();};
+      s.onerror=function(){reject(new Error("Failed: "+url));};
       document.head.appendChild(s);
     });
   }
-  
+
   exportBtn.addEventListener("click",function(){
     var btn=this;
     btn.disabled=true;
-    btn.textContent="⏳ Generuję PDF...";
-    
-    var libs=[];
-    if(typeof html2canvas==="undefined") libs.push(loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"));
-    if(typeof jspdf==="undefined"&&typeof jsPDF==="undefined") libs.push(loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"));
-    
-    Promise.all(libs).then(function(){
+    btn.innerHTML="&#x23F3; Generuj\u0119 PDF...";
+
+    function loadWithFallback(urls){
+      return urls.reduce(function(p,url){
+        return p.catch(function(){return loadScript(url);});
+      },Promise.reject());
+    }
+    var p1=loadWithFallback([
+      "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+    ]);
+    var p2=loadWithFallback([
+      "https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"
+    ]);
+
+    Promise.all([p1,p2]).then(function(){
       var resultsEl=document.getElementById("results-section");
-      // Temporarily expand all sections for PDF
+      // Expand all findings
       var expandEls=resultsEl.querySelectorAll(".expand-content");
       var wasOpen=[];
       for(var i=0;i<expandEls.length;i++){
@@ -653,103 +623,73 @@ document.addEventListener("DOMContentLoaded",function(){
         expandEls[i].classList.add("open");
         expandEls[i].style.maxHeight="none";
       }
-      // Hide export button and reset button during capture
-      var exportSec=document.getElementById("exportSection");
-      var resetBtnEl=document.getElementById("resetBtn");
-      if(exportSec) exportSec.style.display="none";
-      if(resetBtnEl) resetBtnEl.parentElement.style.display="none";
-      
+      // Hide buttons during capture
+      var expSec=document.getElementById("exportSection");
+      var rstParent=document.getElementById("resetBtn");
+      if(rstParent) rstParent=rstParent.parentElement;
+      if(expSec) expSec.style.display="none";
+      if(rstParent) rstParent.style.display="none";
+
       setTimeout(function(){
         html2canvas(resultsEl,{
           scale:2,
           useCORS:true,
-          backgroundColor: document.body.classList.contains("light-mode")?"#F5F3EE":"#0F1923",
-          logging:false,
-          windowWidth:resultsEl.scrollWidth,
-          scrollX:0, scrollY:0
+          backgroundColor:document.body.classList.contains("light-mode")?"#F5F3EE":"#0F1923",
+          logging:false
         }).then(function(canvas){
-          var JsPDF=window.jspdf.jsPDF;
+          var pdf=new window.jspdf.jsPDF("p","mm","a4");
           var imgData=canvas.toDataURL("image/jpeg",0.92);
-          var imgW=canvas.width; var imgH=canvas.height;
-          // A4: 210×297mm, margins 10mm each side → content width=190mm
-          var pdfW=190; var pdfH=(imgH*pdfW)/imgW;
-          var pageH=277; // A4 content height with margins
-          var pdf=new JsPDF("p","mm","a4");
-          
-          if(pdfH<=pageH){
-            pdf.addImage(imgData,"JPEG",10,10,pdfW,pdfH);
-          } else {
-            // Multi-page
-            var position=0;
-            var remaining=pdfH;
-            var pageNum=0;
-            while(remaining>0){
-              if(pageNum>0) pdf.addPage();
-              // Calculate source crop
-              var srcY=(position/pdfH)*imgH;
-              var srcH=Math.min((pageH/pdfH)*imgH, imgH-srcY);
-              var drawH=Math.min(pageH, remaining);
-              
-              // Create temp canvas for this page slice
-              var tmpCanvas=document.createElement("canvas");
-              tmpCanvas.width=imgW; tmpCanvas.height=srcH;
-              var tmpCtx=tmpCanvas.getContext("2d");
-              tmpCtx.drawImage(canvas,0,srcY,imgW,srcH,0,0,imgW,srcH);
-              var sliceData=tmpCanvas.toDataURL("image/jpeg",0.92);
-              pdf.addImage(sliceData,"JPEG",10,10,pdfW,drawH);
-              
-              position+=pageH;
-              remaining-=pageH;
-              pageNum++;
-            }
+          var pdfW=190;
+          var pdfH=(canvas.height*pdfW)/canvas.width;
+          var pageH=277;
+          var y=0;
+          var page=0;
+          while(y<pdfH){
+            if(page>0) pdf.addPage();
+            var srcY=Math.round((y/pdfH)*canvas.height);
+            var srcH=Math.min(Math.round((pageH/pdfH)*canvas.height),canvas.height-srcY);
+            var drawH=Math.min(pageH,pdfH-y);
+            var tmp=document.createElement("canvas");
+            tmp.width=canvas.width;
+            tmp.height=srcH;
+            tmp.getContext("2d").drawImage(canvas,0,srcY,canvas.width,srcH,0,0,canvas.width,srcH);
+            pdf.addImage(tmp.toDataURL("image/jpeg",0.92),"JPEG",10,10,pdfW,drawH);
+            y+=pageH;
+            page++;
           }
           pdf.save("HEXACO_Profil.pdf");
-          
-          // Restore expand states
-          for(var i=0;i<expandEls.length;i++){
-            if(!wasOpen[i]){
-              expandEls[i].classList.remove("open");
-              expandEls[i].style.maxHeight="";
-            } else {
-              expandEls[i].style.maxHeight="";
-            }
-          }
-          if(exportSec) exportSec.style.display="";
-          if(resetBtnEl) resetBtnEl.parentElement.style.display="";
-          btn.disabled=false;
-          btn.textContent="📄 Eksportuj profil do PDF";
-        }).catch(function(err){
-          console.error("PDF error:",err);
-          alert("Nie udało się wygenerować PDF. Spróbuj ponownie.");
+
           // Restore
           for(var i=0;i<expandEls.length;i++){
-            if(!wasOpen[i]){ expandEls[i].classList.remove("open"); expandEls[i].style.maxHeight=""; }
-            else { expandEls[i].style.maxHeight=""; }
+            expandEls[i].style.maxHeight="";
+            if(!wasOpen[i]) expandEls[i].classList.remove("open");
           }
-          if(exportSec) exportSec.style.display="";
-          if(resetBtnEl) resetBtnEl.parentElement.style.display="";
+          if(expSec) expSec.style.display="";
+          if(rstParent) rstParent.style.display="";
           btn.disabled=false;
-          btn.textContent="📄 Eksportuj profil do PDF";
+          btn.innerHTML="&#x1F4C4; Eksportuj profil do PDF";
+        }).catch(function(err){
+          console.error("html2canvas error:",err);
+          alert("B\u0142\u0105d generowania PDF. Spr\u00F3buj ponownie.");
+          for(var i=0;i<expandEls.length;i++){
+            expandEls[i].style.maxHeight="";
+            if(!wasOpen[i]) expandEls[i].classList.remove("open");
+          }
+          if(expSec) expSec.style.display="";
+          if(rstParent) rstParent.style.display="";
+          btn.disabled=false;
+          btn.innerHTML="&#x1F4C4; Eksportuj profil do PDF";
         });
-      },500); // wait for expand animation
+      },600);
+
     }).catch(function(err){
-      console.error("Script load error:",err);
-      alert("Nie udało się załadować bibliotek. Sprawdź połączenie z internetem.");
+      console.error("Lib load error:",err);
+      alert("Nie uda\u0142o si\u0119 za\u0142adowa\u0107 bibliotek. Sprawd\u017A po\u0142\u0105czenie z internetem.");
       btn.disabled=false;
-      btn.textContent="📄 Eksportuj profil do PDF";
+      btn.innerHTML="&#x1F4C4; Eksportuj profil do PDF";
     });
   });
 })();
-
-
-// Theme-aware radar redraw
-document.addEventListener("themeChanged",function(){
-  // We need to redraw the radar with the correct text colors
-  var canvas=document.getElementById("radarChart");
-  if(!canvas)return;
-  // Trigger a recalculation by re-running with stored scores
-  if(window._lastScores) drawRadar(window._lastScores);
-});
 
 </script>
 </body>
